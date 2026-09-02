@@ -6,7 +6,7 @@ NuruCanvas is a responsive photo-gallery web application built with Django. Regi
 
 The deployed application will be available here:
 
-**Live Site:** To be added after deployment
+https://nuru-canvas.onrender.com/
 
 **Repository:** `https://github.com/wanjiruaisha/nuru-canvas`
 
