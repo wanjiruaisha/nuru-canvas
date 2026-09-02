@@ -1,12 +1,109 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NuruCanvas</title>
-</head>
-<body>
-    <h1>Welcome to NuruCanvas</h1>
-    <p>Discover photographs, portraits, and artwork.</p>
-</body>
-</html>
+{% extends 'photo_gallery/base.html' %}
+
+{% block title %}
+    Gallery | NuruCanvas
+{% endblock %}
+
+{% block content %}
+<section class="mb-10 rounded-3xl bg-slate-900 px-6 py-12 text-white md:px-12">
+    <p class="mb-2 font-medium text-amber-400">
+        Welcome to NuruCanvas
+    </p>
+
+    <h1 class="max-w-3xl text-4xl font-bold md:text-6xl">
+        Discover stories captured through light
+    </h1>
+
+    <p class="mt-5 max-w-2xl text-slate-300">
+        Explore photographs, portraits and artwork from our creative community.
+    </p>
+</section>
+
+<section class="mb-8">
+    <h2 class="mb-4 text-lg font-semibold">
+        Filter by tag
+    </h2>
+
+    <div class="flex flex-wrap gap-3">
+        <a
+            href="{% url 'photo_gallery:home' %}"
+            class="rounded-full px-4 py-2 text-sm font-medium
+                {% if not selected_tag %}
+                    bg-amber-500 text-slate-950
+                {% else %}
+                    bg-white text-slate-700
+                {% endif %}"
+        >
+            All
+        </a>
+
+        {% for tag in tags %}
+            <a
+                href="{% url 'photo_gallery:home' %}?tag={{ tag.slug }}"
+                class="rounded-full px-4 py-2 text-sm font-medium
+                    {% if selected_tag == tag %}
+                        bg-amber-500 text-slate-950
+                    {% else %}
+                        bg-white text-slate-700
+                    {% endif %}"
+            >
+                {{ tag.name }}
+            </a>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="grid gap-7 sm:grid-cols-2 lg:grid-cols-3">
+    {% for photo in photos %}
+        <article class="overflow-hidden rounded-2xl bg-white shadow-md transition hover:-translate-y-1 hover:shadow-xl">
+            <a href="{% url 'photo_gallery:photo_detail' photo.pk %}">
+                <img
+                    src="{{ photo.image.url }}"
+                    alt="{{ photo.title }}"
+                    class="h-64 w-full object-cover"
+                >
+            </a>
+
+            <div class="p-5">
+                <div class="mb-3 flex flex-wrap gap-2">
+                    {% for tag in photo.tags.all %}
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800">
+                            {{ tag.name }}
+                        </span>
+                    {% endfor %}
+                </div>
+
+                <h2 class="text-xl font-bold">
+                    {{ photo.title }}
+                </h2>
+
+                <p class="mt-2 text-sm text-slate-600">
+                    {{ photo.description|truncatewords:16 }}
+                </p>
+
+                <div class="mt-5 flex items-center justify-between">
+                    <span class="text-sm text-slate-500">
+                        By {{ photo.uploaded_by.username }}
+                    </span>
+
+                    <div class="flex gap-3 text-sm">
+                        <span>👍 {{ photo.like_count }}</span>
+                        <span>👎 {{ photo.dislike_count }}</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    {% empty %}
+        <div class="col-span-full rounded-2xl bg-white p-10 text-center">
+            <h2 class="text-xl font-semibold">
+                No photos found
+            </h2>
+
+            <p class="mt-2 text-slate-500">
+                Add photos through Django Admin or select another tag.
+            </p>
+        </div>
+    {% endfor %}
+</section>
+{% endblock %}
