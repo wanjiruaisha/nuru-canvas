@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -26,13 +26,60 @@
                 NuruCanvas
             </a>
 
-            <span class="text-sm text-slate-300">
-                Stories captured in light
-            </span>
+            <div class="flex items-center gap-4">
+                {% if user.is_authenticated %}
+                    <span class="hidden text-sm text-slate-300 sm:inline">
+                        Hello, {{ user.username }}
+                    </span>
+
+                    <a
+                        href="{% url 'photo_gallery:profile' %}"
+                        class="text-sm hover:text-amber-400"
+                    >
+                        Profile
+                    </a>
+
+                    <form
+                        method="POST"
+                        action="{% url 'photo_gallery:logout' %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="rounded-lg border border-slate-600 px-4 py-2 text-sm hover:bg-slate-800"
+                        >
+                            Logout
+                        </button>
+                    </form>
+                {% else %}
+                    <a
+                        href="{% url 'photo_gallery:login' %}"
+                        class="text-sm hover:text-amber-400"
+                    >
+                        Login
+                    </a>
+
+                    <a
+                        href="{% url 'photo_gallery:register' %}"
+                        class="rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-slate-950"
+                    >
+                        Register
+                    </a>
+                {% endif %}
+            </div>
         </div>
     </nav>
 
     <main class="mx-auto max-w-7xl px-5 py-8">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="mb-6 rounded-lg bg-green-100 p-4 text-green-700">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
         {% block content %}
         {% endblock %}
     </main>
@@ -41,4 +88,4 @@
         &copy; 2026 NuruCanvas
     </footer>
 </body>
-</html> 
+</html>
