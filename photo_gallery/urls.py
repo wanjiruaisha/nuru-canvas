@@ -40,6 +40,11 @@ urlpatterns = [
         name='photo_detail'
     ),
     path(
+    'photos/<int:pk>/react/<str:reaction_type>/',
+    views.react_to_photo,
+    name='react_to_photo'
+    ),
+    path(
     'profile/',
     views.profile,
     name='profile'
@@ -67,5 +72,6 @@ urlpatterns = [
     ),
     name='password_change_done'
     ),
+    
 
 ]
