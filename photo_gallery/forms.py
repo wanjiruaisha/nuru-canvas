@@ -86,3 +86,61 @@ class LoginForm(AuthenticationForm):
             }
         )
     )
+
+
+from .models import Profile
+
+
+class UserUpdateForm(forms.ModelForm):
+    """Update the username and email stored on the User model."""
+
+    class Meta:
+        model = User
+        fields = ('username', 'email')
+        widgets = {
+            'username': forms.TextInput(
+                attrs={'class': INPUT_CLASSES}
+            ),
+            'email': forms.EmailInput(
+                attrs={'class': INPUT_CLASSES}
+            ),
+        }
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].lower()
+
+        email_exists = User.objects.filter(
+            email__iexact=email
+        ).exclude(pk=self.instance.pk).exists()
+
+        if email_exists:
+            raise forms.ValidationError(
+                'Another account is already using this email.'
+            )
+
+        return email
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    """Update the user's bio and profile picture."""
+
+    class Meta:
+        model = Profile
+        fields = ('bio', 'profile_picture')
+        widgets = {
+            'bio': forms.Textarea(
+                attrs={
+                    'class': INPUT_CLASSES,
+                    'rows': 5,
+                    'placeholder': 'Tell us something about yourself',
+                }
+            ),
+            'profile_picture': forms.ClearableFileInput(
+                attrs={
+                    'class': (
+                        'w-full rounded-lg border border-slate-300 '
+                        'px-4 py-3'
+                    )
+                }
+            ),
+        }    
