@@ -45,10 +45,45 @@
                 {{ photo.description }}
             </p>
 
-            <div class="mt-8 flex gap-5 border-t pt-5">
-                <span>👍 {{ photo.like_count }} likes</span>
-                <span>👎 {{ photo.dislike_count }} dislikes</span>
-            </div>
+            <div class="mt-8 flex flex-wrap gap-4 border-t pt-5">
+    <form
+        method="POST"
+        action="{% url 'photo_gallery:react_to_photo' photo.pk 'like' %}"
+    >
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="rounded-lg border px-5 py-3 font-semibold transition
+                {% if current_reaction == 'like' %}
+                    border-green-600 bg-green-600 text-white
+                {% else %}
+                    border-slate-300 bg-white hover:bg-green-50
+                {% endif %}"
+        >
+            👍 Like · {{ photo.like_count }}
+        </button>
+    </form>
+
+    <form
+        method="POST"
+        action="{% url 'photo_gallery:react_to_photo' photo.pk 'dislike' %}"
+    >
+        {% csrf_token %}
+
+        <button
+            type="submit"
+            class="rounded-lg border px-5 py-3 font-semibold transition
+                {% if current_reaction == 'dislike' %}
+                    border-red-600 bg-red-600 text-white
+                {% else %}
+                    border-slate-300 bg-white hover:bg-red-50
+                {% endif %}"
+        >
+            👎 Dislike · {{ photo.dislike_count }}
+        </button>
+    </form>
+</div>
         </div>
     </div>
 </article>
