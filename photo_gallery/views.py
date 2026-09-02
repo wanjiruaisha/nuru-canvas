@@ -9,7 +9,8 @@ from .forms import (
     UserUpdateForm,
 )
 
-from .models import Photo, Tag, Profile
+from .models import Photo, Tag, Profile, Reaction
+from django.views.decorators.http import require_POST
 
 
 def register(request):
@@ -79,7 +80,7 @@ def home(request):
 
 @login_required
 def photo_detail(request, pk):
-    """Display the complete information for one photo."""
+    """Display one photo and the current user's reaction."""
 
     photo = get_object_or_404(
         Photo.objects.select_related(
@@ -88,10 +89,23 @@ def photo_detail(request, pk):
         pk=pk
     )
 
+    current_reaction = Reaction.objects.filter(
+        user=request.user,
+        photo=photo
+    ).values_list(
+        'reaction_type',
+        flat=True
+    ).first()
+
+    context = {
+        'photo': photo,
+        'current_reaction': current_reaction,
+    }
+
     return render(
         request,
         'photo_gallery/photo_detail.html',
-        {'photo': photo}
+        context
     )
 
 @login_required
@@ -153,4 +167,59 @@ def edit_profile(request):
         request,
         'photo_gallery/edit_profile.html',
         context
+    )
+
+@login_required
+@require_POST
+def react_to_photo(request, pk, reaction_type):
+    """Create, change or remove the user's photo reaction."""
+
+    photo = get_object_or_404(Photo, pk=pk)
+
+    valid_reactions = [
+        Reaction.LIKE,
+        Reaction.DISLIKE,
+    ]
+
+    if reaction_type not in valid_reactions:
+        messages.error(request, 'Invalid reaction.')
+        return redirect(
+            'photo_gallery:photo_detail',
+            pk=photo.pk
+        )
+
+    reaction, created = Reaction.objects.get_or_create(
+        user=request.user,
+        photo=photo,
+        defaults={
+            'reaction_type': reaction_type
+        }
+    )
+
+    if created:
+        messages.success(
+            request,
+            f'You {reaction_type}d this photo.'
+        )
+
+    elif reaction.reaction_type == reaction_type:
+        reaction.delete()
+
+        messages.success(
+            request,
+            'Your reaction was removed.'
+        )
+
+    else:
+        reaction.reaction_type = reaction_type
+        reaction.save(update_fields=['reaction_type'])
+
+        messages.success(
+            request,
+            f'Your reaction was changed to {reaction_type}.'
+        )
+
+    return redirect(
+        'photo_gallery:photo_detail',
+        pk=photo.pk
     )
