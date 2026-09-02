@@ -1,5 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    PasswordChangeForm,
+    UserCreationForm,
+)
 from django.contrib.auth.models import User
 
 
@@ -144,3 +148,14 @@ class ProfileUpdateForm(forms.ModelForm):
                 }
             ),
         }    
+
+class StyledPasswordChangeForm(PasswordChangeForm):
+    """Allow users to change their passwords securely."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        for field in self.fields.values():
+            field.widget.attrs.update({
+                'class': INPUT_CLASSES,
+            })

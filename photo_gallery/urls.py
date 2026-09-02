@@ -1,5 +1,12 @@
-from django.contrib.auth.views import LoginView, LogoutView
-from django.urls import path
+from django.contrib.auth.views import (
+    LoginView,
+    LogoutView,
+    PasswordChangeDoneView,
+    PasswordChangeView,
+)
+
+from django.urls import path, reverse_lazy
+from .forms import LoginForm, StyledPasswordChangeForm
 
 from . import views
 from .forms import LoginForm
@@ -41,6 +48,24 @@ urlpatterns = [
     'profile/edit/',
     views.edit_profile,
     name='edit_profile'
+    ),
+    path(
+    'profile/password-change/',
+    PasswordChangeView.as_view(
+        template_name='photo_gallery/password_change.html',
+        form_class=StyledPasswordChangeForm,
+        success_url=reverse_lazy(
+            'photo_gallery:password_change_done'
+        )
+    ),
+    name='password_change'
+    ),
+    path(
+    'profile/password-change/done/',
+    PasswordChangeDoneView.as_view(
+        template_name='photo_gallery/password_change_done.html'
+    ),
+    name='password_change_done'
     ),
 
 ]
