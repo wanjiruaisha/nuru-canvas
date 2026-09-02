@@ -1,50 +1,49 @@
-{% extends 'photo_gallery/base.html' %}
-
-{% block title %}
-    My Profile | NuruCanvas
-{% endblock %}
-
-{% block content %}
+{% extends 'photo_gallery/base.html' %} {% block title %} My Profile |
+NuruCanvas {% endblock %} {% block content %}
 <div class="mx-auto max-w-2xl rounded-3xl bg-white p-8 shadow-lg">
-    <div class="flex flex-col items-center gap-6 sm:flex-row">
-        {% if profile.profile_picture %}
-            <img
-                src="{{ profile.profile_picture.url }}"
-                alt="{{ user.username }}"
-                class="h-32 w-32 rounded-full object-cover"
-            >
-        {% else %}
-            <div class="flex h-32 w-32 items-center justify-center rounded-full bg-amber-500 text-5xl font-bold text-slate-950">
-                {{ user.username|first|upper }}
-            </div>
-        {% endif %}
-
-        <div class="text-center sm:text-left">
-            <h1 class="text-3xl font-bold">
-                {{ user.username }}
-            </h1>
-
-            <p class="mt-1 text-slate-500">
-                {{ user.email|default:"No email provided" }}
-            </p>
-
-            <p class="mt-4 text-slate-700">
-                {% if profile.bio %}
-                    {{ profile.bio }}
-                {% else %}
-                    You haven’t added a bio yet.
-                {% endif %}
-            </p>
-        </div>
+  <div class="flex flex-col items-center gap-6 sm:flex-row">
+    {% if profile.profile_picture %}
+    <img
+      src="{{ profile.profile_picture.url }}"
+      alt="{{ user.username }}"
+      class="h-32 w-32 rounded-full object-cover"
+    />
+    {% else %}
+    <div
+      class="flex h-32 w-32 items-center justify-center rounded-full bg-amber-500 text-5xl font-bold text-slate-950"
+    >
+      {{ user.username|first|upper }}
     </div>
+    {% endif %}
 
-    <div class="mt-8 border-t pt-6">
-        <a
-            href="{% url 'photo_gallery:edit_profile' %}"
-            class="inline-block rounded-lg bg-amber-500 px-5 py-3 font-semibold text-slate-950 hover:bg-amber-400"
-        >
-            Edit profile
-        </a>
+    <div class="text-center sm:text-left">
+      <h1 class="text-3xl font-bold">{{ user.username }}</h1>
+
+      <p class="mt-1 text-slate-500">
+        {{ user.email|default:"No email provided" }}
+      </p>
+
+      <p class="mt-4 text-slate-700">
+        {% if profile.bio %} {{ profile.bio }} {% else %} You haven’t added a
+        bio yet. {% endif %}
+      </p>
     </div>
+  </div>
+
+  <div class="mt-8 flex flex-wrap gap-3 border-t pt-6">
+    <a
+      href="{% url 'photo_gallery:edit_profile' %}"
+      class="rounded-lg bg-amber-500 px-5 py-3 font-semibold text-slate-950"
+    >
+      Edit profile
+    </a>
+
+    <a
+      href="{% url 'photo_gallery:password_change' %}"
+      class="rounded-lg border border-slate-300 px-5 py-3 font-semibold"
+    >
+      Change password
+    </a>
+  </div>
 </div>
 {% endblock %}
