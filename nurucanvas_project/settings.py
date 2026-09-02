@@ -56,6 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'cloudinary_storage',
+    'cloudinary',
+
     'photo_gallery.apps.PhotoGalleryConfig',
 
 ]
@@ -195,3 +198,21 @@ if RENDER_EXTERNAL_HOSTNAME:
     CSRF_TRUSTED_ORIGINS.append(
         f'https://{RENDER_EXTERNAL_HOSTNAME}'
     )
+
+USE_CLOUDINARY = config(
+    'USE_CLOUDINARY',
+    default=False,
+    cast=bool
+)
+
+if USE_CLOUDINARY:
+    CLOUDINARY_STORAGE = {
+        'CLOUD_NAME': config('CLOUDINARY_CLOUD_NAME'),
+        'API_KEY': config('CLOUDINARY_API_KEY'),
+        'API_SECRET': config('CLOUDINARY_API_SECRET'),
+        'SECURE': True,
+    }
+
+    DEFAULT_FILE_STORAGE = (
+        'cloudinary_storage.storage.MediaCloudinaryStorage'
+    )    
